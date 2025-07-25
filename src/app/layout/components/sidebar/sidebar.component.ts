@@ -19,8 +19,8 @@ export class SidebarComponent {
     public menuItems: MenuItem[] = [
         { label: 'Inicio', icon: 'pi pi-home', route: '/system' },
         { label: 'Usuarios', icon: 'pi pi-user', route: 'users' },
-        { label: 'Estudiantes', icon: 'pi pi-address-book', route: '/students', badge: '5' },
-        { label: 'Profesores', icon: 'pi pi-graduation-cap', route: '/teachers', badge: '8' },
+        { label: 'Profesores', icon: 'pi pi-graduation-cap', route: 'teachers'},
+        { label: 'Estudiantes', icon: 'pi pi-address-book', route: 'students'},
         { label: 'Cursos', icon: 'pi pi-bookmark', route: '/courses' },
         { label: 'Inscripciones', icon: 'pi pi-receipt', route: '/inscriptions', badge: '25' },
     ];

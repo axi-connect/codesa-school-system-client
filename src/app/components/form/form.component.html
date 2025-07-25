@@ -7,34 +7,70 @@
     <div class="flex gap-4 flex-wrap">
         <ng-container *ngFor="let field of config.fields">
             <ng-container [ngSwitch]="field.type">
-                <p-datepicker *ngSwitchCase="'date'" 
-                    [id]="field.name" 
-                    [showIcon]="true"
-                    [name]="field.name"
-                    dateFormat="yy/mm/dd"   
-                    [placeholder]="field.label" 
-                    class="flex-1 min-w-[200px]" 
-                    formControlName="{{field.name}}"
-                />
-
-                <p-floatlabel *ngSwitchDefault variant="on" class="flex-1 min-w-[200px]">
-                    <input
-                        pInputText
-                        class="w-full"
-                        [id]="field.name"
+                <div *ngSwitchCase="'date'" class="flex-1 min-w-[200px]">
+                    <p-datepicker  
+                        [id]="field.name" 
+                        [showIcon]="true"
                         [name]="field.name"
-                        autocomplete="off"
-                        [type]="field.type"
-                        [required]="!!field.required"
+                        dateFormat="yy/mm/dd"   
+                        [placeholder]="field.label" 
+                        class="flex-1 min-w-[200px]" 
                         formControlName="{{field.name}}"
+                        [invalid]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)"
                     />
-                        
-                    <!-- [invalid]="username.invalid && (username.touched || exampleForm.submitted)" -->
-                    <!-- @if (username.invalid && (username.touched || exampleForm.submitted)) {
-                        <p-message severity="error" size="small" variant="simple">Username is required.</p-message>
-                    } -->
-                    <label [for]="field.name">{{ field.label }}</label>
-                </p-floatlabel>
+                    <p-message 
+                        severity="error" size="small" variant="simple"
+                        *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)"
+                    >
+                        {{ getErrorMessage(field) }}
+                    </p-message>
+                </div>
+
+                <div *ngSwitchCase="'select'" class="flex-1 min-w-[200px]">
+                    <p-select 
+                        class="w-full" 
+                        optionValue="id"
+                        [id]="field.name" 
+                        [checkmark]="true"
+                        optionLabel="text"
+                        [options]="field.options" 
+                        [required]="!!field.required"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder" 
+                        [invalid]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)"
+                    />
+
+                    <p-message 
+                        size="small" variant="simple" severity="error"
+                        *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)" 
+                    >
+                        {{ getErrorMessage(field) }}
+                    </p-message>
+                </div>
+
+                <div *ngSwitchDefault class="flex-1 min-w-[200px]">
+                    <p-floatlabel variant="on">
+                        <input
+                            pInputText
+                            class="w-full"
+                            [id]="field.name"
+                            [name]="field.name"
+                            autocomplete="off"
+                            [type]="field.type"
+                            [required]="!!field.required"
+                            [formControlName]="field.name"
+                            [invalid]="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)"
+                        />
+                        <label [for]="field.name">{{ field.label }}</label>
+                    </p-floatlabel>
+
+                    <p-message 
+                        size="small" variant="simple" severity="error"
+                        *ngIf="form.get(field.name)?.invalid && (form.get(field.name)?.touched || submitted)" 
+                    >
+                        {{ getErrorMessage(field) }}
+                    </p-message>
+                </div>
             </ng-container>
         </ng-container>
     </div>
@@ -52,7 +88,8 @@
             type="submit" 
             icon="pi pi-check-circle"
             [rounded]="true"
-            label="Guardar"
+            [label]="isEditMode ? 'Actualizar' : 'Guardar'"
+            [loading]="loading"
         ></p-button>
     </div>
 </form>

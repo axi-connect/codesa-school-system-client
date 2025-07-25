@@ -9,9 +9,9 @@ import { DialogModule } from "primeng/dialog";
 import { RouterModule } from "@angular/router";
 import { InputTextModule } from "primeng/inputtext";
 import { FloatLabelModule } from "primeng/floatlabel";
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormComponent, FormConfig } from "../../../components/form/form.component";
+import { FormComponent, FormConfig } from "../../components/form/form.component";
 
 export interface User {
   nombre: string;
@@ -34,6 +34,7 @@ export class UserComponent implements OnInit{
   public users: User[] = [];
   public loadingTable: boolean = true;
   public dialogVisible: boolean = false;
+  public userToEdit: User | null = null;
   public userToDelete: User | null = null;
   public deleteDialogVisible: boolean = false;
   public dialogMessage: string | null = null;
@@ -60,9 +61,10 @@ export class UserComponent implements OnInit{
     this.tabIndex = "1";
     this.formDefaultValues = {...customer, fecha_nacimiento: new Date(customer.fecha_nacimiento)}
 
-    setTimeout(() => {
-      document.getElementById('password')?.setAttribute('disabled', 'true');
-    }, 0);
+    this.userToEdit = customer;
+    this.formUserComponent.isEditMode = true;
+    this.formUserComponent.disableField('password');
+    this.cdr.detectChanges();
   }
 
   async ngOnInit(): Promise<void> {
@@ -79,12 +81,18 @@ export class UserComponent implements OnInit{
     } catch (error) {
       this.users = [];
     } finally {
-      this.cdr.detectChanges();
       this.loadingTable = false;
+      this.cdr.detectChanges();
     }
   }
 
   async onFormSubmit(formData: any): Promise<void> {
+    if(this.formUserComponent.isEditMode) this.updateUser(formData);
+    else this.createUser(formData);
+  }
+
+  async createUser(formData: any): Promise<void> {
+    this.formUserComponent.loading = true;
     const token = localStorage.getItem('auth');
     try {
       const response = await fetch(`${environment.apiUrl}/users`, {
@@ -110,6 +118,48 @@ export class UserComponent implements OnInit{
       this.dialogMessage = 'Error al crear el usuario';
       this.dialogVisible = true;
       this.cdr.detectChanges();
+    } finally {
+      this.formUserComponent.loading = false;
+    }
+  }
+
+  async updateUser(formData: any): Promise<void> {
+    this.formUserComponent.loading = true;
+    const token = localStorage.getItem('auth');
+    // Clonar y eliminar el campo password si existe
+    const dataToUpdate = { ...formData };
+    delete dataToUpdate.password;
+    try {
+      const response = await fetch(`${environment.apiUrl}/users/${this.userToEdit?.id_user}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(dataToUpdate)
+      });
+      
+      const responseData = await response.json();
+      if (responseData.successful) {
+        // Actualizar el usuario en la lista
+        this.users = this.users.map(u =>
+          u.id_user === responseData.data.id_user ? responseData.data : u
+        );
+        this.dialogMessage = 'Usuario actualizado correctamente';
+        this.formUserComponent.resetForm();
+        this.tabIndex = "0";
+        this.userToEdit = null;
+      } else {
+        this.dialogMessage = responseData.message || 'No se pudo actualizar el usuario';
+      }
+      this.dialogVisible = true;
+      this.cdr.detectChanges();
+    } catch (error) {
+      this.dialogMessage = 'Error al actualizar el usuario';
+      this.dialogVisible = true;
+      this.cdr.detectChanges();
+    } finally {
+      this.formUserComponent.loading = false;
     }
   }
 
@@ -132,7 +182,6 @@ export class UserComponent implements OnInit{
       const result = await response.json();
       if (result.successful) {
         this.users = this.users.filter(u => u.id_user !== user.id_user);
-        console.log(this.users);
         this.dialogMessage = 'Usuario eliminado correctamente';
       } else {
         this.dialogMessage = result.message || 'No se pudo eliminar el usuario';

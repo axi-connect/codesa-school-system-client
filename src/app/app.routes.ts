@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { SystemPageComponent } from './pages/system/system-page';
+import { UserComponent } from './modules/users/user.component';
+import { TeacherComponent } from './modules/teachers/teacher.component';
+import { StudentComponent } from './modules/students/student.component';
 
 export const routes: Routes = [
     {
@@ -14,7 +17,15 @@ export const routes: Routes = [
             },
             {
                 path: 'users',
-                loadChildren: () => import('./modules/users/users-module').then(m => m.UsersModule)
+                component: UserComponent
+            },
+            {
+                path: 'teachers',
+                component: TeacherComponent
+            },
+            {
+                path: 'students',
+                component: StudentComponent
             },
         ]
     },
