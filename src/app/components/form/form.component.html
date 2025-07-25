@@ -1,0 +1,58 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="my-6 flex flex-col gap-4">
+    <div class="flex items-center gap-2" *ngIf="config?.title">
+        <i *ngIf="config.icon" [class]="config.icon + ' text-xl'" aria-hidden="true"></i>
+        <h4> {{ config.title }}</h4>
+    </div>
+
+    <div class="flex gap-4 flex-wrap">
+        <ng-container *ngFor="let field of config.fields">
+            <ng-container [ngSwitch]="field.type">
+                <p-datepicker *ngSwitchCase="'date'" 
+                    [id]="field.name" 
+                    [showIcon]="true"
+                    [name]="field.name"
+                    dateFormat="yy/mm/dd"   
+                    [placeholder]="field.label" 
+                    class="flex-1 min-w-[200px]" 
+                    formControlName="{{field.name}}"
+                />
+
+                <p-floatlabel *ngSwitchDefault variant="on" class="flex-1 min-w-[200px]">
+                    <input
+                        pInputText
+                        class="w-full"
+                        [id]="field.name"
+                        [name]="field.name"
+                        autocomplete="off"
+                        [type]="field.type"
+                        [required]="!!field.required"
+                        formControlName="{{field.name}}"
+                    />
+                        
+                    <!-- [invalid]="username.invalid && (username.touched || exampleForm.submitted)" -->
+                    <!-- @if (username.invalid && (username.touched || exampleForm.submitted)) {
+                        <p-message severity="error" size="small" variant="simple">Username is required.</p-message>
+                    } -->
+                    <label [for]="field.name">{{ field.label }}</label>
+                </p-floatlabel>
+            </ng-container>
+        </ng-container>
+    </div>
+
+    <div class="flex w-full justify-end mt-4 gap-4">
+        <p-button
+            type="button"
+            severity="secondary"
+            icon="pi pi-times-circle"
+            [rounded]="true"
+            label="Cancelar"
+            (click)="resetForm()"
+        ></p-button>
+        <p-button
+            type="submit" 
+            icon="pi pi-check-circle"
+            [rounded]="true"
+            label="Guardar"
+        ></p-button>
+    </div>
+</form>

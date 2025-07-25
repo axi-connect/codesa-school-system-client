@@ -49,6 +49,7 @@
               }
             ],
             "styles": [
+              "node_modules/primeicons/primeicons.css",
               "src/styles.scss"
             ]
           },
@@ -66,7 +67,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -109,5 +116,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "69ba5579-5010-4246-850d-5b46f6d09635"
   }
 }

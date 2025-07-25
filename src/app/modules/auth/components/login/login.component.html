@@ -1,0 +1,76 @@
+<div         
+  class="px-8 h-[100vh] md:px-12 lg:px-20 flex items-center justify-center backdrop-blur-3xl !bg-cover !bg-center !bg-no-repeat"
+  style="background: radial-gradient(circle, #b20000 20%, #ef4444 70%);"
+>
+  <p-card class="dark:bg-surface-900 p-8 md:p-12 shadow-sm rounded-2xl w-full max-w-xl mx-auto flex flex-col gap-8">
+    <!-- Encabezado -->
+    <div class="flex flex-col items-center gap-4">
+      <div class="flex items-center gap-4">
+        <img 
+          width="150"
+          alt="codesa-isotype"
+          class="filter invert sepia"
+          src="http://www.codesa.com.co/wp-content/uploads/2021/06/codesa-logo.png" >
+      </div>
+
+      <div class="flex flex-col items-center w-full">
+        <div class="text-surface-900 dark:text-surface-0 text-2xl font-semibold leading-tight text-center w-full">Iniciar Sesión</div>
+        <div class="text-center w-full">
+          <span class="text-surface-700 dark:text-surface-200 leading-normal">¿No tienes una cuenta?</span>
+          <a
+            [routerLink]="['/auth/register']"
+            class="text-primary font-medium ml-1 cursor-pointer hover:text-primary-emphasis hover:underline hover:text-red-500"
+          >
+            Regístrate
+          </a>
+          <!-- <p-button [routerLink]="['/']" routerLinkActive="router-link-active"  [style]="{'padding': 0}" label="Regístrate" link class="text-primary font-medium ml-1 cursor-pointer hover:text-primary-emphasis"/> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-8 flex flex-col gap-4 w-full">
+        <p-floatlabel variant="on">
+            <input 
+              pInputText 
+              required
+              id="email" 
+              autocomplete="off" 
+              class="w-full"
+              formControlName="email"
+            />
+            <label for="email">Correo</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+            <input 
+              pInputText 
+              required
+              id="password" 
+              type="password"
+              autocomplete="off" 
+              class="w-full"
+              formControlName="password"
+            />
+            <label for="password">Password</label>
+        </p-floatlabel>
+
+        <p-button
+          type="submit" 
+          icon="pi pi-user"
+          [rounded]="true"
+          label="Iniciar Sesión"
+          styleClass="w-full"
+        ></p-button>
+    </form>
+  </p-card>
+
+  <p-dialog header="Error" [modal]="true" [(visible)]="dialogVisible" [style]="{ width: '25rem' }">
+    <span class="p-text-secondary block mb-8">{{ dialogMessage }}</span>
+    <div class="flex justify-end gap-2">
+        <p-button label="OK" severity="secondary" (click)="dialogVisible = false" />
+    </div>
+  </p-dialog>
+</div>
+
+<!-- style="background: radial-gradient(circle, rgba(11, 109, 96, 1) 20%, rgba(7, 198, 125, 1) 70%);" -->
